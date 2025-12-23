@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Library Management System</h2>
+
+<h3>Add Book</h3>
+<input id="id" placeholder="ID">
+<input id="title" placeholder="Title">
+<input id="author" placeholder="Author">
+<input id="cat" placeholder="Category">
+<button onclick="add()">Add</button>
+
+<h3>Remove Book</h3>
+<input id="rid" placeholder="ID">
+<button onclick="removeBook()">Remove</button>
+
+<h3>Search</h3>
+<input id="sid" placeholder="ID">
+<button onclick="searchId()">Search by ID</button>
+<input id="stitle" placeholder="Title">
+<button onclick="searchTitle()">Search by Title</button>
+
+<h3>Issue / Return</h3>
+<input id="iid" placeholder="ID">
+<button onclick="issue()">Issue</button>
+<button onclick="ret()">Return</button>
+
+<h3>All Books</h3>
+<button onclick="load()">Refresh</button>
+<pre id="out"></pre>
+
+<script>
+function add(){
+  fetch("/api/books",{method:"POST",headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({book_id:+id.value,title:title.value,author:author.value,category:cat.value})})
+  .then(load);
+}
+
+function removeBook(){
+  fetch("/api/books?id="+rid.value,{method:"DELETE"}).then(load);
+}
+
+function searchId(){
+  fetch("/api/books?id="+sid.value).then(r=>r.json()).then(d=>out.textContent=JSON.stringify(d,null,2));
+}
+
+function searchTitle(){
+  fetch("/api/books?title="+stitle.value).then(r=>r.json()).then(d=>out.textContent=JSON.stringify(d,null,2));
+}
+
+function issue(){
+  fetch("/api/issue",{method:"POST",headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({id:+iid.value})}).then(load);
+}
+
+function ret(){
+  fetch("/api/return",{method:"POST",headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({id:+iid.value})}).then(load);
+}
+
+function load(){
+  fetch("/api/books").then(r=>r.json()).then(d=>out.textContent=JSON.stringify(d,null,2));
+}
+</script>
+</body>
+</html>
